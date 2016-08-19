@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>mytitle</title>
+<script>
+window.onload = init;
+window.onresize = init;
+window.onmousemove = updatemousepos;
+
+var the_svg = null;
+var svg_w = null;
+var svg_h = null;
+
+var element_w = null;
+var element_h = null;
+
+var click_drag = 0; // 0 for pan, 1 for click
+
+var client_pan_origin_x = null;
+var client_pan_origin_y = null;
+
+var svg_pan_origin_x = null;
+var svg_pan_origin_y = null;
+
+var svg_zoom = null;
+
+var elem_scale = null;
+
+function updatemousepos(e)
+{
+  var mouse_div = document.getElementById("mouse_me");
+
+  var element_x = the_svg.getBoundingClientRect().left; // position of the_svg wrt the viewport
+  var element_y = the_svg.getBoundingClientRect().top;
+
+  var element_centre_x = Math.round(element_w/2) + element_x;
+  var element_centre_y = Math.round(element_h/2) + element_y;
+
+  mouse_div.innerHTML = + (e.clientX - the_svg.getBoundingClientRect().left) + ", " + (e.clientY - the_svg.getBoundingClientRect().top) + "; " + element_centre_x + ", " + element_centre_y;
+}
+
+function init()
+{
+the_svg = document.getElementById("a_svg");
+the_svg.addEventListener("mousedown", m_down);
+the_svg.addEventListener("mouseup", m_up);
+the_svg.addEventListener("dblclick", animate);
+
+the_slider = document.getElementById("a_slider");
+the_slider.min = 0.9;
+the_slider.max = 1.2;
+the_slider.step = 0.01;
+the_slider.value = 1;
+the_slider.addEventListener("input", slider_move)
+
+console.log("window size = " + window.innerWidth + ", "+ window.innerHeight);
+
+element_w = the_svg.getBoundingClientRect().width;
+element_h = the_svg.getBoundingClientRect().height;
+
+svg_w = the_svg.viewBox.baseVal.width;
+svg_h = the_svg.viewBox.baseVal.height;
+
+svg_zoom = the_slider.value;
+
+elem_scale = element_w / svg_w;
+console.log(elem_scale);
+
+writein();
+}
+
+function animate() {
+the_svg.viewBox.baseVal.x -= 5;
+writein();
+  if (the_svg.viewBox.baseVal.x > -100) {
+    window.requestAnimationFrame(animate);
+  }
+}
+
+function m_down(e)
+{
+  client_pan_origin_x = e.clientX; // position of the click wrt page
+  client_pan_origin_y = e.clientY;
+
+  var element_x = the_svg.getBoundingClientRect().left; // position of the clicked element wrt the viewport
+  var element_y = the_svg.getBoundingClientRect().top;
+
+  var svg_x = client_pan_origin_x - element_x;
+  var svg_y = client_pan_origin_y - element_y;
+  //console.log("mouse down coords in svg_element-space: " + svg_x + ", " + svg_y);
+
+  svg_pan_origin_x = the_svg.viewBox.baseVal.x;
+  svg_pan_origin_y = the_svg.viewBox.baseVal.y;
+
+  the_svg.addEventListener("mousemove", panning)
+  click_drag = 0;
+}
+function panning(e)
+{
+  do_pan(e.clientX, e.clientY, client_pan_origin_x, client_pan_origin_y, svg_pan_origin_x, svg_pan_origin_y);
+}
+function do_pan(x, y, ox, oy, sx, sy)
+{
+  if ( (Math.abs(x-ox)>10) || (Math.abs(y-oy)>10) )
+  {
+    click_drag = 1;
+  }
+  var client_pan_delta_x = x-ox;
+  var client_pan_delta_y = y-oy;
+
+  var svg_pan_delta_x = Math.round(client_pan_delta_x / svg_zoom / elem_scale);
+  var svg_pan_delta_y = Math.round(client_pan_delta_y / svg_zoom / elem_scale);
+
+
+  console.log("panning lock: " + ox + ", " + oy + "\n"
+		+ "panning delta: " + client_pan_delta_x + ", " + client_pan_delta_y + "\n"
+		+ "viewbox lock: " + sx + ", " + sy
+		);
+
+  the_svg.viewBox.baseVal.x = Math.round(sx - svg_pan_delta_x);
+  the_svg.viewBox.baseVal.y = Math.round(sy - svg_pan_delta_y);
+  writein();
+}
+function m_up(e)
+{
+  console.log("mouse up");
+  the_svg.removeEventListener("mousemove", panning);
+  console.log("click_drag: " + click_drag)
+
+  if (click_drag == 0)
+  {
+    autopan(e.clientX, e.clientY);
+  }
+}
+
+function autopan(tx, ty)
+{
+
+  var element_x = the_svg.getBoundingClientRect().left; // position of the_svg wrt the viewport
+  var element_y = the_svg.getBoundingClientRect().top;
+
+  var element_centre_x = Math.round(element_w/2) + element_x;
+  var element_centre_y = Math.round(element_h/2) + element_y;
+
+
+  var autopan_delta_x = tx - element_centre_x;
+  var autopan_delta_y = ty - element_centre_y;
+  console.log("autopan delta: " + autopan_delta_x + ", " + autopan_delta_y);
+  var autopan_target_x = the_svg.viewBox.baseVal.x + Math.round(autopan_delta_x / svg_zoom / elem_scale);
+  var autopan_target_y = the_svg.viewBox.baseVal.y + Math.round(autopan_delta_y / svg_zoom / elem_scale);
+
+  var transition_frames = 10; // animation to complete in x frames
+  var interpolate_x = [];
+  var interpolate_y = [];
+  for (var i=0; i<transition_frames; i++)
+  {
+    interpolate_x[i] = the_svg.viewBox.baseVal.x + (i+1)*(autopan_target_x - the_svg.viewBox.baseVal.x)/transition_frames;
+    interpolate_y[i] = the_svg.viewBox.baseVal.y + (i+1)*(autopan_target_y - the_svg.viewBox.baseVal.y)/transition_frames;
+  }
+
+  var j = 0;
+  function animate()
+  {
+    if (j < transition_frames-1)
+    {
+    the_svg.viewBox.baseVal.x = Math.round(interpolate_x[j]);
+    the_svg.viewBox.baseVal.y = Math.round(interpolate_y[j]);
+    j = j+1;
+    window.requestAnimationFrame(animate);
+    }
+  }
+  animate();
+  writein();
+}
+
+function slider_move(e)
+{
+  console.log("min, max, value: " + the_slider.min + ", " + the_slider.max + ", " + the_slider.value);
+
+  svg_zoom = the_slider.value; // can modify this later on
+
+  var element_x = the_svg.getBoundingClientRect().left;
+  var element_y = the_svg.getBoundingClientRect().top;
+  var element_centre_x = Math.round(element_w/2) + element_x;
+  var element_centre_y = Math.round(element_h/2) + element_y;
+
+  var target_x = the_svg.viewBox.baseVal.x + Math.round(element_centre_x / svg_zoom / elem_scale);
+  var target_y = the_svg.viewBox.baseVal.y + Math.round(element_centre_y / svg_zoom / elem_scale);
+// target_x and target_y must be the svg coordinates at the element centre
+  the_svg.viewBox.baseVal.x = target_x + (the_svg.viewBox.baseVal.x - target_x/2) * svg_zoom;
+  the_svg.viewBox.baseVal.y = target_y + (the_svg.viewBox.baseVal.y - target_y/2) * svg_zoom;
+
+
+
+  the_svg.viewBox.baseVal.width = Math.round(svg_w / svg_zoom);
+  the_svg.viewBox.baseVal.height = Math.round(svg_h / svg_zoom);
+
+  writein();
+}
+
+function writein()
+{
+var write_content = "Clicking the svg image changes the zoom and position.<br><br>x, y, width, height"
+write_content += "<br>getAttribute(\"viewBox\"): " + document.getElementsByTagName("svg")[0].getAttribute("viewBox");
+var myviewbox = document.getElementsByTagName("svg")[0].viewBox.baseVal;
+write_content += "<br>viewBox.baseVal: " + myviewbox.x + ", " + myviewbox.y + ", " + myviewbox.width + ", " + myviewbox.height;
+
+document.getElementById("write_me").innerHTML = write_content;
+document.getElementById("zoomlabel").innerHTML = "&times; " + the_slider.value;
+}
+</script>
+<style>
+svg
+{
+border: 1px solid black;
+}
+
+#floater
+{
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  background-color: #fff;
+  border: 1px solid green;
+}
+
+</style>
+</head>
+
+<body>
+<div id="floater">
+<div id="mouse_me">0, 0
+</div><br><br>
+<div id="write_me">
+</div>
+</div>
+<input id="a_slider" type="range" style="width: 500px;"><label id="zoomlabel" for="a_slider">zoom level</label><br>
+<svg id="a_svg" width="750" height="500" viewBox="0 0 1500 1000" xmlns="http://www.w3.org/2000/svg">
+	<rect x="0" y="0" width="10" height="10" style="fill: #ff0; stroke: blue; stroke-width: 1"/>
+	<circle cx="1500" cy="0" r="10" style="fill: #0ff; stroke: blue; stroke-width: 1"/>
+	<rect x="1490" y="990" width="10" height="10" style="fill: #ff0; stroke: blue; stroke-width: 1"/>
+	<circle cx="0" cy="1000" r="10" style="fill: #0ff; stroke: blue; stroke-width: 1"/>
+	<rect x="745" y="480" width="10" height="40" style="fill: #f0f; stroke: red; stroke-width: 4"/>
+</svg>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>mytitle</title>
+<script>
+window.onload = init;
+window.onresize = init;
+
+function init(evt)
+{
+  lwpSVGViewer(document.getElementById("a_svg"));
+  console.log("initiated");
+}
+</script>
+<script src="lwpSVGViewer.js"></script>
+<style>
+svg
+{
+border: 0px solid black;
+background-color: #eee;
+}
+
+#floater
+{
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  background-color: #fff;
+  border: 1px solid green;
+}
+
+</style>
+</head>
+
+<body>
+<div id="floater">
+  <div><b>Mouse Coordinates</b>
+    <div>client:<br>&nbsp;&nbsp;&nbsp;&nbsp;<span id="client_coords">x,y</span></div>
+    <div>element:<br>&nbsp;&nbsp;&nbsp;&nbsp;<span id="elem_coords">x,y</span></div>
+    <div>svg:<br>&nbsp;&nbsp;&nbsp;&nbsp;<span id="svg_coords">x,y</span></div>
+  </div><br>
+  <div><b>Objects</b>
+    <div>element l,t,w,h:<br>&nbsp;&nbsp;&nbsp;&nbsp;<span id="elem_prop">l,t,w,h</span></div>
+    <div>svg w,h:<br>&nbsp;&nbsp;&nbsp;&nbsp;<span id="svg_prop">w,h</span></div>
+    <div>viewbox l,t,w,h:<br>&nbsp;&nbsp;&nbsp;&nbsp;<span id="viewbox_prop">l,t,w,h</span></div>
+  </div><br>
+  <div><b>Zoom Level</b>
+    <div>zoom: <br>&nbsp;&nbsp;&nbsp;&nbsp;<span id="zoom_value">?</span> &times;</div>
+  </div>
+</div>
+<!-- <input id="a_slider" type="range" style="width: 500px;"><label id="zoomlabel" for="a_slider">zoom level</label><br> -->
+<svg id="a_svg" width="750" height="500" xmlns="http://www.w3.org/2000/svg">
+	<rect x="0" y="0" width="10" height="10" style="fill: #ff0; stroke: blue; stroke-width: 1"/>
+	<circle cx="1495" cy="5" r="5" style="fill: #0ff; stroke: blue; stroke-width: 1"/>
+	<rect x="1490" y="990" width="10" height="10" style="fill: #ff0; stroke: blue; stroke-width: 1"/>
+	<circle cx="5" cy="995" r="5" style="fill: #0ff; stroke: blue; stroke-width: 1"/>
+	<rect x="745" y="480" width="10" height="40" style="fill: #f0f; stroke: red; stroke-width: 4"/>
+</svg>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+<div>create scroll</div>
+</body>
+</html>
