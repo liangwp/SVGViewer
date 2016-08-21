@@ -17,7 +17,6 @@ function lwpSVGViewer(svg) // entry point. Call this function from window.onload
     svg.viewBox.baseVal.height = svg.full_height; // 1000
 
     svg.zoom = Math.min(svg.getBoundingClientRect().width/svg.full_width, svg.getBoundingClientRect().height/svg.full_height);
-    console.log(svg.zoom);
   }
   recalc_size();
   
@@ -41,7 +40,7 @@ function lwpSVGViewer(svg) // entry point. Call this function from window.onload
   svg.addEventListener("mouseup", m_up);
 
 // configs
-  var click_threshold = 10;
+  var click_threshold = 10; // x, y distance of movement to "unregister" a click "event".
   var anim_interpolation_fn = function(delta) { // delta = {x: delta_x, y: delta_y}
     var transition_frames = 15;
 
