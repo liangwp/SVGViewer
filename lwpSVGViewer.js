@@ -4,14 +4,19 @@ function lwpSVGViewer(svg) // entry point. Call this function from window.onload
   console.log("lwp library initiated with \"" + svg.id + "\"");
 
   svg.addEventListener("mousemove", function (evt) { updatemousepos(evt, svg); }); // debug
-  // svg.viewBox.baseVal = svg.getBBox(); // does not work, baseVal object cannot be changed.
-  svg.full_width = svg.getBBox().width;
-  svg.full_height = svg.getBBox().height;
-  svg.viewBox.baseVal.x = svg.getBBox().x; // 0
-  svg.viewBox.baseVal.y = svg.getBBox().y; // 0
-  svg.viewBox.baseVal.width = svg.full_width; // 1500
-  svg.viewBox.baseVal.height = svg.full_height; // 1000
+  window.addEventListener("resize", recalc_size());
 
+  function recalc_size()
+  {
+    // svg.viewBox.baseVal = svg.getBBox(); // does not work, baseVal object cannot be changed.
+    svg.full_width = svg.getBBox().width;
+    svg.full_height = svg.getBBox().height;
+    svg.viewBox.baseVal.x = svg.getBBox().x; // 0
+    svg.viewBox.baseVal.y = svg.getBBox().y; // 0
+    svg.viewBox.baseVal.width = svg.full_width; // 1500
+    svg.viewBox.baseVal.height = svg.full_height; // 1000
+  }
+  
   // add sliders and labels
   var slider1 = createSlider("s1", 500);
   var label1 = createLabel("l1", "s1");

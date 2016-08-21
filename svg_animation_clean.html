@@ -4,7 +4,6 @@
 <title>mytitle</title>
 <script>
 window.onload = init;
-window.onresize = init;
 
 function init(evt)
 {
@@ -23,7 +22,7 @@ background-color: #eee;
 #floater
 {
   position: fixed;
-  top: 0px;
+  top: 100px;
   right: 0px;
   background-color: #fff;
   border: 1px solid green;
@@ -49,7 +48,7 @@ background-color: #eee;
   </div>
 </div>
 <!-- <input id="a_slider" type="range" style="width: 500px;"><label id="zoomlabel" for="a_slider">zoom level</label><br> -->
-<svg id="a_svg" width="750" height="500" xmlns="http://www.w3.org/2000/svg">
+<svg id="a_svg" width="100%" xmlns="http://www.w3.org/2000/svg">
 	<rect x="0" y="0" width="10" height="10" style="fill: #ff0; stroke: blue; stroke-width: 1"/>
 	<circle cx="1495" cy="5" r="5" style="fill: #0ff; stroke: blue; stroke-width: 1"/>
 	<rect x="1490" y="990" width="10" height="10" style="fill: #ff0; stroke: blue; stroke-width: 1"/>
