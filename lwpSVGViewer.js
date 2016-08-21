@@ -4,7 +4,7 @@ function lwpSVGViewer(svg) // entry point. Call this function from window.onload
   console.log("lwp library initiated with \"" + svg.id + "\"");
 
   svg.addEventListener("mousemove", function (evt) { updatemousepos(evt, svg); }); // debug
-  window.addEventListener("resize", recalc_size());
+  window.addEventListener("resize", recalc_size);
 
   function recalc_size()
   {
@@ -15,7 +15,11 @@ function lwpSVGViewer(svg) // entry point. Call this function from window.onload
     svg.viewBox.baseVal.y = svg.getBBox().y; // 0
     svg.viewBox.baseVal.width = svg.full_width; // 1500
     svg.viewBox.baseVal.height = svg.full_height; // 1000
+
+    svg.zoom = Math.min(svg.getBoundingClientRect().width/svg.full_width, svg.getBoundingClientRect().height/svg.full_height);
+    console.log(svg.zoom);
   }
+  recalc_size();
   
   // add sliders and labels
   var slider1 = createSlider("s1", 500);
@@ -32,9 +36,6 @@ function lwpSVGViewer(svg) // entry point. Call this function from window.onload
   // demo
   slider2.style.opacity=0.5;
   label2.style.display="none";
-
-
-  svg.zoom = Math.min(svg.getBoundingClientRect().width/svg.full_width, svg.getBoundingClientRect().height/svg.full_height);
 
   svg.addEventListener("mousedown", m_down);
   svg.addEventListener("mouseup", m_up);
