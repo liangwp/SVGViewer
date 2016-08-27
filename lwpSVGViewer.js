@@ -31,13 +31,22 @@ function lwpSVGViewer(svg) // entry point. Call this function from window.onload
   svg.parentNode.insertBefore(label1, slider1.nextSibling);
   svg.parentNode.insertBefore(slider2, label1.nextSibling);
   svg.parentNode.insertBefore(label2, slider2.nextSibling);
+  slider1.label = label1;
+  slider2.label = label2;
+  
+  slider1.oninput = function() {slider1.label.innerHTML = "zoom level 1: " + slider1.value;};
+  slider2.oninput = function() {slider2.label.innerHTML = "zoom level 2: " + slider2.value;};
 
   // demo
   slider2.style.opacity=0.5;
-  label2.style.display="none";
-
+  //label2.style.display="none";
+  
+  
+  // add svg event listeners
   svg.addEventListener("mousedown", m_down);
   svg.addEventListener("mouseup", m_up);
+  
+  svg.addEventListener("dblclick", function() {console.log("dblclick detected");});
 
 // configs
   var click_threshold = 10; // x, y distance of movement to "unregister" a click "event".
@@ -188,7 +197,25 @@ function lwpSVGViewer(svg) // entry point. Call this function from window.onload
   // <input id="a_slider" type="range" style="width: 500px;"><label id="zoomlabel" for="a_slider">zoom level</label><br>
 }
 
-
+/*
+function createSliderAfter(target_id, slider_id, width_in_px, text_label)
+{
+    var a_slider = document.createElement("input");
+    a_slider.type = "range";
+    a_slider.style.width = width_in_px + "px";
+    a_slider.id = slider_id;
+    
+    var a_label = document.createElement("label");
+    a_label.htmlFor = slider_id;
+    var a_txt = document.createTextNode(text_label);
+    a_label.appendChild(a_txt);
+    
+    a_slider.label = a_label;
+    
+    svg.parentNode.insertBefore(slider1, svg.nextSibling);
+    
+}
+*/
 
 
 
