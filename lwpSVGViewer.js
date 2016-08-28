@@ -21,21 +21,31 @@ function lwpSVGViewer(svg) // entry point. Call this function from window.onload
   recalc_size();
   
   // add sliders and labels
+  var min_zoom = 0.2;
+  var max_zoom = 5;
   var slider1 = createSlider("s1", 500);
   var label1 = createLabel("l1", "s1");
   var slider2 = createSlider("s2", 400);
   var label2 = createLabel("l2", "s2");
   label1.innerHTML = "zoom level 1";
   label2.innerHTML = "zoom level 2";
+  slider1.min = min_zoom;
+  slider2.min = min_zoom;
+  slider1.max = max_zoom;
+  slider2.max = max_zoom;
+  slider1.step = 0.01;
+  slider2.step = 0.01;
   svg.parentNode.insertBefore(slider1, svg.nextSibling);
   svg.parentNode.insertBefore(label1, slider1.nextSibling);
   svg.parentNode.insertBefore(slider2, label1.nextSibling);
   svg.parentNode.insertBefore(label2, slider2.nextSibling);
   slider1.label = label1;
   slider2.label = label2;
+  slider1.value = svg.zoom;
+  slider2.value = svg.zoom*3;
   
-  slider1.oninput = function() {slider1.label.innerHTML = "zoom level 1: " + slider1.value;};
-  slider2.oninput = function() {slider2.label.innerHTML = "zoom level 2: " + slider2.value;};
+  slider1.addEventListener("input", function() {svg.zoom = slider1.value; slider1.label.innerHTML = "zoom level 1: " + slider1.value;} );
+  slider2.addEventListener("input", function() {slider2.label.innerHTML = "zoom level 2: " + slider2.value;} );
 
   // demo
   slider2.style.opacity=0.5;
